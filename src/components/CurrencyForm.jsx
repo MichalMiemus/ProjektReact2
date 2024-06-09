@@ -1,17 +1,15 @@
-import React, { useState } from "react";
-
 function CurrencyForm({ onResult }) {
-  const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("EUR");
-  const [error, setError] = useState("");
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    const amount = parseFloat(formData.get("amount"));
+    const currency = formData.get("currency");
+
     if (amount <= 0) {
-      setError("Podaj kwotę większą od zera.");
+      onResult({ error: "Podaj kwotę większą od zera." });
       return;
     }
-    setError("");
+
     onResult({ loading: true });
 
     try {
@@ -22,8 +20,7 @@ function CurrencyForm({ onResult }) {
       const rate = data?.rates?.[0]?.mid;
 
       if (!rate) {
-        setError("Błędne dane z API.");
-        onResult({ loading: false });
+        onResult({ error: "Błędne dane z API.", loading: false });
         return;
       }
 
@@ -48,8 +45,6 @@ function CurrencyForm({ onResult }) {
               className="form-control"
               min="0"
               step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
               required
             />
           </div>
@@ -61,8 +56,6 @@ function CurrencyForm({ onResult }) {
               id="currency"
               name="currency"
               className="form-control"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
               required
             >
               <option value="EUR">Euro</option>
@@ -75,11 +68,6 @@ function CurrencyForm({ onResult }) {
       <button type="submit" className="btn btn-primary mt-4">
         Przelicz
       </button>
-      {error && (
-        <div className="alert alert-danger mt-3" style={{ maxWidth: "300px" }}>
-          {error}
-        </div>
-      )}
     </form>
   );
 }

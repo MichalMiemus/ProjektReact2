@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CurrencyForm from "./components/CurrencyForm";
 import Result from "./components/Result";
+import "./App.css";
 
 function App() {
   const [result, setResult] = useState(null);
